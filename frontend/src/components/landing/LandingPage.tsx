@@ -4,6 +4,7 @@ import React from "react";
 import { useWateera } from "../../context/WateeraContext";
 import { Eva } from "../eva";
 import { HeroSection } from "../hero";
+import { WorkspaceShowcase } from "../showcase";
 import { Navbar } from "./Navbar";
 import { WorkspaceContinuation } from "./WorkspaceContinuation";
 
@@ -25,6 +26,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ isEvaVisible = true })
       <main id="wateera-landing-main" className="relative w-full bg-[#000000]">
         <HeroSection />
         <WorkspaceContinuation />
+        <WorkspaceShowcase />
       </main>
 
       {/* Mounted outside GSAP's pinned transform stage so position: fixed viewport coordinates stay exact */}
