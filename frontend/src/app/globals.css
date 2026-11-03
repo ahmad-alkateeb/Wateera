@@ -1,0 +1,197 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-brand-magenta: #C84BFE;
+  --color-brand-violet: #8B5CF6;
+  --color-brand-indigo: #4F46E5;
+  --color-midnight-indigo: #0B0914;
+  --color-wateera-dark: #0B0914;
+}
+
+/* ============================================================================
+   1. Polished Light Mode Variables (Default Modern SaaS Aesthetic)
+   Soft off-white/light gray background, white glassmorphic cards, dark text
+   ============================================================================ */
+:root {
+  --bg-color: #F4F6FB;
+  --text-color: #0F172A;
+  --glass-bg: rgba(255, 255, 255, 0.86);
+  --glass-border: rgba(226, 232, 240, 0.95);
+  --glass-shadow: 0 10px 30px -5px rgba(15, 23, 42, 0.06), 0 4px 14px -2px rgba(139, 92, 246, 0.06);
+
+  --text-heading: #0F172A;
+  --text-muted: #475569;
+  --surface-subtle: rgba(241, 245, 249, 0.85);
+}
+
+/* ============================================================================
+   2. Dark Futuristic Mode Overrides (#0B0914)
+   ============================================================================ */
+.dark {
+  --bg-color: #0B0914;
+  --text-color: #F8FAFC;
+
+  --glass-bg: rgba(18, 14, 34, 0.65);
+  --glass-border: rgba(200, 75, 254, 0.16);
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.45);
+
+  --text-heading: #FFFFFF;
+  --text-muted: #94A3B8;
+  --surface-subtle: rgba(15, 11, 29, 0.65);
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.35s ease, color 0.35s ease;
+  overflow-x: hidden;
+}
+
+.heading-color {
+  color: var(--text-heading);
+}
+
+.muted-color {
+  color: var(--text-muted);
+}
+
+/* Primary Brand Gradient Utilities */
+.gradient-primary-text {
+  background: linear-gradient(135deg, #C84BFE 0%, #8B5CF6 50%, #4F46E5 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gradient-primary-bg {
+  background: linear-gradient(135deg, #C84BFE 0%, #8B5CF6 50%, #4F46E5 100%);
+}
+
+.gradient-primary-border {
+  border-image: linear-gradient(135deg, #C84BFE, #8B5CF6, #4F46E5) 1;
+}
+
+/* 60-Degree Animated Gradient Border (Clean, No Outer Ray/Glow) */
+@keyframes gradientBorder60 {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.eva-gradient-border-60 {
+  background: linear-gradient(
+    60deg,
+    #C84BFE 0%,
+    #8B5CF6 20%,
+    #4F46E5 40%,
+    #C84BFE 60%,
+    #8B5CF6 80%,
+    #4F46E5 100%
+  );
+  background-size: 300% 300%;
+  animation: gradientBorder60 3.5s ease infinite;
+}
+
+/* ============================================================================
+   3. Glassmorphism System (Adaptive for Light Mode & Dark Mode)
+   ============================================================================ */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(139, 92, 246, 0.18);
+  box-shadow: 0 8px 25px -4px rgba(15, 23, 42, 0.06);
+}
+
+.dark .glass-panel {
+  background: rgba(18, 14, 34, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.glass-button {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(139, 92, 246, 0.25);
+  color: #1E293B;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dark .glass-button {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #E2E8F0;
+}
+
+.glass-button:hover {
+  background: rgba(200, 75, 254, 0.12);
+  border-color: rgba(200, 75, 254, 0.45);
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.22);
+}
+
+.hover-gradient-border {
+  position: relative;
+  z-index: 1;
+}
+
+.hover-gradient-border::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: transparent;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  z-index: -1;
+  transition: background 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.hover-gradient-border:hover::before {
+  background: linear-gradient(135deg, #C84BFE, #8B5CF6, #4F46E5);
+}
+
+.hover-gradient-border:hover {
+  box-shadow: 0 12px 32px -4px rgba(139, 92, 246, 0.18);
+}
+
+.dark .hover-gradient-border::before {
+  background: linear-gradient(135deg, rgba(200, 75, 254, 0.2), rgba(79, 70, 229, 0.2));
+}
+
+.dark .hover-gradient-border:hover::before {
+  background: linear-gradient(135deg, #C84BFE, #8B5CF6, #4F46E5);
+}
+
+.dark .hover-gradient-border:hover {
+  box-shadow: 0 0 25px rgba(200, 75, 254, 0.25), 0 0 40px rgba(139, 92, 246, 0.18);
+}
+
+/* Ambient Radial Glow Background Utilities */
+.ambient-glow-purple {
+  background: radial-gradient(circle at 50% 50%, rgba(200, 75, 254, 0.12) 0%, transparent 65%);
+}
+
+.ambient-glow-indigo {
+  background: radial-gradient(circle at 50% 50%, rgba(79, 70, 229, 0.14) 0%, transparent 70%);
+}
