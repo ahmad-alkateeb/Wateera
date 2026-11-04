@@ -47,6 +47,13 @@ export const Navbar: React.FC<NavbarProps> = ({ isEvaVisible = true }) => {
             >
               {lang === "ar" ? "مميزات EVA" : "EVA Features"}
             </a>
+
+            <a
+              href="#platform-features"
+              className="py-1.5 bg-transparent text-xs lg:text-sm font-semibold text-slate-300 hover:text-[#C84BFE] transition-colors"
+            >
+              {lang === "ar" ? "المميزات" : "Features"}
+            </a>
           </div>
         </nav>
 

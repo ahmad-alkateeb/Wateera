@@ -5,6 +5,7 @@ import { useWateera } from "../../context/WateeraContext";
 import { Eva } from "../eva";
 import { HeroSection } from "../hero";
 import { WorkspaceShowcase } from "../showcase";
+import { PlatformFeatures } from "../features";
 import { Navbar } from "./Navbar";
 import { WorkspaceContinuation } from "./WorkspaceContinuation";
 
@@ -27,6 +28,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ isEvaVisible = true })
         <HeroSection />
         <WorkspaceContinuation />
         <WorkspaceShowcase />
+        <PlatformFeatures />
       </main>
 
       {/* Mounted outside GSAP's pinned transform stage so position: fixed viewport coordinates stay exact */}
