@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, type Variants } from "framer-motion";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useWateera } from "../../context/WateeraContext";
 
 // --- Framer Motion Scroll-Reveal Variants ---
@@ -106,26 +107,46 @@ const services: Service[] = [
 
 export const PlatformFeatures: React.FC = () => {
   const { lang } = useWateera();
-  // Active row state: null initially; expands on hover and collapses when mouse leaves
+  // Active row state: null initially; expands on intentional hover/click
   const [activeRow, setActiveRow] = useState<string | null>(null);
+  const isScrollingRef = useRef<boolean>(false);
+
+  // Prevent accidental accordion height changes while the user is actively fast-scrolling
+  useEffect(() => {
+    let scrollTimer: ReturnType<typeof setTimeout> | null = null;
+    const handleScroll = () => {
+      isScrollingRef.current = true;
+      if (scrollTimer) clearTimeout(scrollTimer);
+      scrollTimer = setTimeout(() => {
+        isScrollingRef.current = false;
+      }, 150);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (scrollTimer) clearTimeout(scrollTimer);
+    };
+  }, []);
 
   return (
-    <section
-      id="platform-features"
-      dir={lang === "ar" ? "rtl" : "ltr"}
-      className="relative z-30 w-full bg-[#050409] py-24 sm:py-32 px-4 sm:px-6 lg:px-8 border-t border-white/[0.06] overflow-hidden"
-    >
-      {/* Ambient background atmosphere glow */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 -z-10"
-        style={{
-          background:
-            "radial-gradient(ellipse 900px 600px at 50% 20%, rgba(200, 75, 254, 0.08), rgba(79, 70, 229, 0.05) 40%, transparent 75%)",
-        }}
-      />
+    <div className="relative w-full overflow-visible bg-[#050505]">
+      <section
+        id="platform-features"
+        dir={lang === "ar" ? "rtl" : "ltr"}
+        className="relative z-10 w-full bg-[#050505] py-24 sm:py-32 px-4 sm:px-6 lg:px-8 border-t border-white/[0.06] overflow-hidden"
+      >
+        {/* Ambient background atmosphere glow */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 -z-10"
+          style={{
+            background:
+              "radial-gradient(ellipse 900px 600px at 50% 20%, rgba(200, 75, 254, 0.08), rgba(79, 70, 229, 0.05) 40%, transparent 75%)",
+          }}
+        />
 
-      <div className="max-w-6xl mx-auto">
+        <div id="platform-features-content" className="max-w-6xl mx-auto will-change-[opacity,transform]">
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16 sm:mb-20">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/[0.03] border border-[#C84BFE]/25 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#C84BFE] mb-4 shadow-[0_0_15px_rgba(200,75,254,0.15)]">
@@ -150,7 +171,13 @@ export const PlatformFeatures: React.FC = () => {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: false, amount: 0.2 }}
-          onMouseLeave={() => setActiveRow(null)}
+          onMouseLeave={(e) => {
+            if (isScrollingRef.current) return;
+            const rect = e.currentTarget.getBoundingClientRect();
+            // Avoid collapsing when scrolling down into the EVA section so page height never jumps
+            if (e.clientY >= rect.bottom - 16) return;
+            setActiveRow(null);
+          }}
           className="w-full border-t border-white/10"
         >
           {services.map((service) => {
@@ -160,7 +187,16 @@ export const PlatformFeatures: React.FC = () => {
               <motion.div
                 key={service.id}
                 variants={itemVariants}
-                onMouseEnter={() => setActiveRow(service.id)}
+                onMouseEnter={() => {
+                  if (!isScrollingRef.current) {
+                    setActiveRow(service.id);
+                  }
+                }}
+                onMouseMove={() => {
+                  if (!isScrollingRef.current && activeRow !== service.id) {
+                    setActiveRow(service.id);
+                  }
+                }}
                 className={`group relative border-b border-white/10 transition-colors duration-300 ${
                   isActive ? "bg-white/[0.02]" : "hover:bg-white/[0.01]"
                 }`}
@@ -223,6 +259,7 @@ export const PlatformFeatures: React.FC = () => {
                   {isActive && (
                     <motion.div
                       key={`accordion-content-${service.id}`}
+                      inherit={false}
                       initial={{ height: 0, opacity: 0 }}
                       animate={{
                         height: "auto",
@@ -239,6 +276,9 @@ export const PlatformFeatures: React.FC = () => {
                           height: { duration: 0.32, ease: [0.16, 1, 0.3, 1] },
                           opacity: { duration: 0.18 },
                         },
+                      }}
+                      onAnimationComplete={() => {
+                        ScrollTrigger.refresh();
                       }}
                       className="overflow-hidden"
                     >
@@ -317,6 +357,13 @@ export const PlatformFeatures: React.FC = () => {
           })}
         </motion.div>
       </div>
-    </section>
+
+        {/* Seamless bottom fade transition into the EVA Stage section */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute bottom-0 left-0 right-0 h-52 bg-gradient-to-b from-transparent via-[#050505]/80 to-[#050505] z-20"
+        />
+      </section>
+    </div>
   );
 };

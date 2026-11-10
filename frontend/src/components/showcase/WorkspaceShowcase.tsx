@@ -50,6 +50,7 @@ const VolumeOffIcon = () => (
 export const WorkspaceShowcase: React.FC = () => {
   const { lang } = useWateera();
 
+  const wrapperRef = useRef<HTMLDivElement | null>(null);
   const sectionRef = useRef<HTMLElement | null>(null);
   const sceneRef = useRef<HTMLDivElement | null>(null);
   const monitorRef = useRef<HTMLDivElement | null>(null);
@@ -80,12 +81,13 @@ export const WorkspaceShowcase: React.FC = () => {
   };
 
   useEffect(() => {
+    const wrapper = wrapperRef.current;
     const section = sectionRef.current;
     const scene = sceneRef.current;
     const monitor = monitorRef.current;
     const glow = glowRef.current;
     const caption = captionRef.current;
-    if (!section || !scene || !monitor || !glow || !caption) return;
+    if (!wrapper || !section || !scene || !monitor || !glow || !caption) return;
 
     const ctx = gsap.context(() => {
       // Dynamic initial scale calculation: ensures the Monitor Screen div exactly fills
@@ -109,12 +111,10 @@ export const WorkspaceShowcase: React.FC = () => {
 
       const tl = gsap.timeline({
         scrollTrigger: {
-          trigger: section,
+          trigger: wrapper,
           start: "top top",
-          end: "+=200%",
-          pin: true,
-          scrub: 1.2,
-          anticipatePin: 1,
+          end: "bottom bottom",
+          scrub: 0.6,
           invalidateOnRefresh: true,
         },
       });
@@ -128,116 +128,118 @@ export const WorkspaceShowcase: React.FC = () => {
       )
         .fromTo(glow, { autoAlpha: 0 }, { autoAlpha: 1, ease: "power2.out", duration: 0.6 }, 0.2)
         .to(caption, { autoAlpha: 1, y: 0, ease: "power2.out", duration: 0.25 }, 0.72);
-    }, section);
+    }, wrapper);
 
     return () => ctx.revert();
   }, []);
 
   return (
-    <section
-      ref={sectionRef}
-      id="workspace-showcase"
-      className="relative z-40 w-full w-screen h-screen max-w-none p-0 m-0 overflow-hidden bg-black"
-    >
-      {/* 1. The Scene Container (Target of GSAP Scale Animation with aggressive GPU acceleration) */}
-      <div
-        ref={sceneRef}
-        className="relative w-full h-full max-w-none p-0 m-0 overflow-hidden will-change-transform transform-gpu select-none"
-        style={{
-          transformOrigin: "center center",
-          transform: "translateZ(0)",
-          backfaceVisibility: "hidden",
-          WebkitFontSmoothing: "antialiased",
-        }}
+    <div ref={wrapperRef} className="relative w-full h-[280vh] bg-black">
+      <section
+        ref={sectionRef}
+        id="workspace-showcase"
+        className="sticky top-0 z-20 w-full h-screen max-w-none p-0 m-0 overflow-hidden bg-black"
       >
-        {/* 2. Environment Image (Background Desk Scene) - w-full h-full object-cover for zero gaps at scale: 1 */}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={DESK_BG_IMAGE}
-          alt="Wateera Calm Next-Gen Workspace Environment"
-          className="w-full h-full object-cover select-none pointer-events-none"
-        />
-
-        {/* Wateera Dark/Purple Ambient Overlay Gradients */}
+        {/* 1. The Scene Container (Target of GSAP Scale Animation with aggressive GPU acceleration) */}
         <div
-          aria-hidden="true"
-          className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-black/60 pointer-events-none"
-        />
-        <div
-          aria-hidden="true"
-          className="absolute inset-0 pointer-events-none"
+          ref={sceneRef}
+          className="relative w-full h-full max-w-none p-0 m-0 overflow-hidden will-change-transform transform-gpu select-none"
           style={{
-            background:
-              "radial-gradient(ellipse 75% 65% at 50% 50%, rgba(200, 75, 254, 0.15) 0%, rgba(79, 70, 229, 0.09) 45%, transparent 75%)",
+            transformOrigin: "center center",
+            transform: "translateZ(0)",
+            backfaceVisibility: "hidden",
+            WebkitFontSmoothing: "antialiased",
           }}
-        />
-
-        {/* Ambient brand atmosphere backlight behind the monitor */}
-        <div
-          ref={glowRef}
-          aria-hidden="true"
-          className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vw] sm:w-[58vw] max-w-[860px] aspect-video rounded-full blur-3xl opacity-60"
-          style={{
-            background:
-              "radial-gradient(circle, rgba(200, 75, 254, 0.35) 0%, rgba(139, 92, 246, 0.2) 40%, rgba(79, 70, 229, 0.1) 70%, transparent 100%)",
-          }}
-        />
-
-        {/* 3. The Monitor Video Screen (Centered at 50% 50% matching transformOrigin) */}
-        <div
-          ref={monitorRef}
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[88vw] sm:w-[54vw] max-w-[800px] aspect-video rounded-lg sm:rounded-xl overflow-hidden p-[3px] sm:p-1 bg-[#15141d] border border-white/20 shadow-[0_20px_60px_rgba(0,0,0,0.95),0_0_60px_rgba(200,75,254,0.35)] flex flex-col z-10"
         >
-          {/* Monitor Screen Frame (Target measured for dynamic viewport scale) */}
+          {/* 2. Environment Image (Background Desk Scene) - w-full h-full object-cover for zero gaps at scale: 1 */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={DESK_BG_IMAGE}
+            alt="Wateera Calm Next-Gen Workspace Environment"
+            className="w-full h-full object-cover select-none pointer-events-none"
+          />
+
+          {/* Wateera Dark/Purple Ambient Overlay Gradients */}
           <div
-            ref={monitorScreenRef}
-            className="relative w-full h-full rounded-md sm:rounded-[8px] overflow-hidden bg-black ring-1 ring-white/10 shadow-inner"
+            aria-hidden="true"
+            className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-black/60 pointer-events-none"
+          />
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background:
+                "radial-gradient(ellipse 75% 65% at 50% 50%, rgba(200, 75, 254, 0.15) 0%, rgba(79, 70, 229, 0.09) 45%, transparent 75%)",
+            }}
+          />
+
+          {/* Ambient brand atmosphere backlight behind the monitor */}
+          <div
+            ref={glowRef}
+            aria-hidden="true"
+            className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vw] sm:w-[58vw] max-w-[860px] aspect-video rounded-full blur-3xl opacity-60"
+            style={{
+              background:
+                "radial-gradient(circle, rgba(200, 75, 254, 0.35) 0%, rgba(139, 92, 246, 0.2) 40%, rgba(79, 70, 229, 0.1) 70%, transparent 100%)",
+            }}
+          />
+
+          {/* 3. The Monitor Video Screen (Centered at 50% 50% matching transformOrigin) */}
+          <div
+            ref={monitorRef}
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[88vw] sm:w-[54vw] max-w-[800px] aspect-video rounded-lg sm:rounded-xl overflow-hidden p-[3px] sm:p-1 bg-[#15141d] border border-white/20 shadow-[0_20px_60px_rgba(0,0,0,0.95),0_0_60px_rgba(200,75,254,0.35)] flex flex-col z-10"
           >
-            {/* Native HTML5 Video with aggressive GPU composite layering for buttery smooth 60fps */}
-            <video
-              ref={videoRef}
-              src={SHOWCASE_VIDEO_URL}
-              autoPlay
-              loop
-              muted
-              playsInline
-              className="w-full h-full object-cover rounded-md pointer-events-none will-change-transform transform-gpu"
-              style={{
-                transform: "translateZ(0)",
-                backfaceVisibility: "hidden",
-                WebkitFontSmoothing: "antialiased",
-              }}
-            />
-
-            {/* Glossy Screen Reflection Overlay */}
+            {/* Monitor Screen Frame (Target measured for dynamic viewport scale) */}
             <div
-              aria-hidden="true"
-              className="pointer-events-none absolute inset-0 z-20 bg-gradient-to-tr from-transparent via-white/[0.02] to-white/[0.05]"
-            />
-
-            {/* Floating Mute / Unmute Button */}
-            <button
-              type="button"
-              onClick={toggleMute}
-              aria-label={isMuted ? "Unmute video" : "Mute video"}
-              className="absolute bottom-2.5 right-2.5 sm:bottom-3.5 sm:right-3.5 z-50 pointer-events-auto inline-flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-full text-white/90 hover:text-white bg-black/60 hover:bg-black/85 border border-white/20 hover:border-[#C84BFE]/70 backdrop-blur-md transition-all cursor-pointer shadow-[0_0_18px_rgba(200,75,254,0.35)] active:scale-95"
+              ref={monitorScreenRef}
+              className="relative w-full h-full rounded-md sm:rounded-[8px] overflow-hidden bg-black ring-1 ring-white/10 shadow-inner"
             >
-              {isMuted ? <VolumeOffIcon /> : <VolumeOnIcon />}
-            </button>
+              {/* Native HTML5 Video with aggressive GPU composite layering for buttery smooth 60fps */}
+              <video
+                ref={videoRef}
+                src={SHOWCASE_VIDEO_URL}
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="w-full h-full object-cover rounded-md pointer-events-none will-change-transform transform-gpu"
+                style={{
+                  transform: "translateZ(0)",
+                  backfaceVisibility: "hidden",
+                  WebkitFontSmoothing: "antialiased",
+                }}
+              />
+
+              {/* Glossy Screen Reflection Overlay */}
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0 z-20 bg-gradient-to-tr from-transparent via-white/[0.02] to-white/[0.05]"
+              />
+
+              {/* Floating Mute / Unmute Button */}
+              <button
+                type="button"
+                onClick={toggleMute}
+                aria-label={isMuted ? "Unmute video" : "Mute video"}
+                className="absolute bottom-2.5 right-2.5 sm:bottom-3.5 sm:right-3.5 z-50 pointer-events-auto inline-flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-full text-white/90 hover:text-white bg-black/60 hover:bg-black/85 border border-white/20 hover:border-[#C84BFE]/70 backdrop-blur-md transition-all cursor-pointer shadow-[0_0_18px_rgba(200,75,254,0.35)] active:scale-95"
+              >
+                {isMuted ? <VolumeOffIcon /> : <VolumeOnIcon />}
+              </button>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Floating Caption revealed at bottom once zoom-out settles */}
-      <div
-        ref={captionRef}
-        dir={lang === "ar" ? "rtl" : "ltr"}
-        className="pointer-events-none absolute bottom-6 sm:bottom-10 left-1/2 -translate-x-1/2 z-30 text-center invisible"
-      >
-        <span className="block text-[11px] sm:text-xs font-semibold uppercase tracking-[0.28em] text-[#C84BFE] drop-shadow-[0_2px_12px_rgba(200,75,254,0.6)]">
-          {lang === "ar" ? "استعراض مساحة العمل" : "THE WORKSPACE SHOWCASE"}
-        </span>
-      </div>
-    </section>
+        {/* Floating Caption revealed at bottom once zoom-out settles */}
+        <div
+          ref={captionRef}
+          dir={lang === "ar" ? "rtl" : "ltr"}
+          className="pointer-events-none absolute bottom-6 sm:bottom-10 left-1/2 -translate-x-1/2 z-30 text-center invisible"
+        >
+          <span className="block text-[11px] sm:text-xs font-semibold uppercase tracking-[0.28em] text-[#C84BFE] drop-shadow-[0_2px_12px_rgba(200,75,254,0.6)]">
+            {lang === "ar" ? "استعراض مساحة العمل" : "THE WORKSPACE SHOWCASE"}
+          </span>
+        </div>
+      </section>
+    </div>
   );
 };

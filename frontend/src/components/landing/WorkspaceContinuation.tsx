@@ -45,7 +45,7 @@ export const WorkspaceContinuation: React.FC = () => {
 
   return (
     <section
-      id="eva-showcase"
+      id="workspace-pillars"
       dir={lang === "ar" ? "rtl" : "ltr"}
       className="relative z-20 w-full bg-[#000000] py-24 sm:py-32 px-6 lg:px-10"
     >

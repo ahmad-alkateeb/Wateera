@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@gsap/react": "^2.1.2",
     "@react-three/fiber": "^9.8.2",
     "@splinetool/react-spline": "^4.1.0",
     "@splinetool/runtime": "^2.0.133",

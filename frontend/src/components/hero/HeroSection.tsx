@@ -10,15 +10,17 @@ import { WateeraHeroWordmark } from "./WateeraHeroWordmark";
 gsap.registerPlugin(ScrollTrigger);
 
 export const HeroSection: React.FC = () => {
+  const wrapperRef = useRef<HTMLDivElement | null>(null);
   const stageRef = useRef<HTMLElement | null>(null);
   const wordmarkWrapRef = useRef<HTMLDivElement | null>(null);
   const archCurtainRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
+    const wrapper = wrapperRef.current;
     const stage = stageRef.current;
     const wordmark = wordmarkWrapRef.current;
     const curtain = archCurtainRef.current;
-    if (!stage || !wordmark || !curtain) return;
+    if (!wrapper || !stage || !wordmark || !curtain) return;
 
     const ctx = gsap.context(() => {
       const revealItems = curtain.querySelectorAll(".arch-reveal-item");
@@ -41,12 +43,10 @@ export const HeroSection: React.FC = () => {
 
       const tl = gsap.timeline({
         scrollTrigger: {
-          trigger: stage,
+          trigger: wrapper,
           start: "top top",
-          end: "+=210%",
-          pin: true,
-          scrub: 0.65,
-          anticipatePin: 1,
+          end: "bottom bottom",
+          scrub: 0.5,
           invalidateOnRefresh: true,
         },
       });
@@ -85,38 +85,40 @@ export const HeroSection: React.FC = () => {
         0.54
       );
 
-      // Phase 3 (0.88 -> 1.00): Short settle beat before ScrollTrigger unlocks normal page scrolling
+      // Phase 3 (0.88 -> 1.00): Short settle beat before sticky container finishes
       tl.to({}, { duration: 0.12 });
-    }, stage);
+    }, wrapper);
 
     return () => ctx.revert();
   }, []);
 
   return (
-    <section
-      ref={stageRef}
-      id="hero"
-      className="relative isolate h-screen w-full flex flex-col items-center justify-center overflow-hidden px-3 sm:px-6 lg:px-10 bg-[#000000]"
-    >
-      {/* Layer -1: Pinned 8,000-Particle Additive Silk Flow Field (top half remains visible & live) */}
-      <FlowFieldBackground
-        particleCount={8000}
-        noiseScale={0.001}
-        speed={0.6}
-        trailFadeAlpha={0.015}
-        cursorRadius={250}
-      />
-
-      {/* Layer 10: Monumental "WATEERA" Centerpiece Typography */}
-      <div
-        ref={wordmarkWrapRef}
-        className="relative z-10 w-full flex items-center justify-center will-change-transform"
+    <div ref={wrapperRef} className="relative w-full h-[300vh] bg-[#000000]">
+      <section
+        ref={stageRef}
+        id="hero"
+        className="sticky top-0 isolate h-screen w-full flex flex-col items-center justify-center overflow-hidden px-3 sm:px-6 lg:px-10 bg-[#000000]"
       >
-        <WateeraHeroWordmark />
-      </div>
+        {/* Layer -1: Pinned 8,000-Particle Additive Silk Flow Field (top half remains visible & live) */}
+        <FlowFieldBackground
+          particleCount={8000}
+          noiseScale={0.001}
+          speed={0.6}
+          trailFadeAlpha={0.015}
+          cursorRadius={250}
+        />
 
-      {/* Layer 20: Sliding Pitch-Black Arch Curtain (stops at ~48% height below "WATEERA") */}
-      <ArchCurtain ref={archCurtainRef} />
-    </section>
+        {/* Layer 10: Monumental "WATEERA" Centerpiece Typography */}
+        <div
+          ref={wordmarkWrapRef}
+          className="relative z-10 w-full flex items-center justify-center will-change-transform"
+        >
+          <WateeraHeroWordmark />
+        </div>
+
+        {/* Layer 20: Sliding Pitch-Black Arch Curtain (stops at ~48% height below "WATEERA") */}
+        <ArchCurtain ref={archCurtainRef} />
+      </section>
+    </div>
   );
 };

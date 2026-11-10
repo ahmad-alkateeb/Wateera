@@ -1,0 +1,1 @@
+export { ProcessHowItWorksSection } from "./ProcessHowItWorksSection";
