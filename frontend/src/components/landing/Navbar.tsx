@@ -6,9 +6,13 @@ import { toggleEvaTeleport } from "../eva";
 
 interface NavbarProps {
   isEvaVisible?: boolean;
+  onToggleEva?: () => void;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ isEvaVisible = true }) => {
+export const Navbar: React.FC<NavbarProps> = ({
+  isEvaVisible = false,
+  onToggleEva,
+}) => {
   const { lang, setLang } = useWateera();
 
   return (
@@ -62,7 +66,13 @@ export const Navbar: React.FC<NavbarProps> = ({ isEvaVisible = true }) => {
           <button
             type="button"
             id="nav-eva-beam-toggle"
-            onClick={() => toggleEvaTeleport()}
+            onClick={() => {
+              if (onToggleEva) {
+                onToggleEva();
+              } else {
+                toggleEvaTeleport();
+              }
+            }}
             title={
               isEvaVisible
                 ? lang === "ar"

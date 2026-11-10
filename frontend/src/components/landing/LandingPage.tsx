@@ -12,6 +12,7 @@ import { ProcessHowItWorksSection } from "../process";
 import { TestimonialsSection } from "../testimonials";
 import { FaqSection } from "../faq";
 import { FooterSection } from "../footer";
+import { Eva, toggleEvaTeleport } from "../eva";
 import { Navbar } from "./Navbar";
 import { WorkspaceContinuation } from "./WorkspaceContinuation";
 
@@ -21,7 +22,15 @@ interface LandingPageProps {
 
 export const LandingPage: React.FC<LandingPageProps> = ({ isEvaVisible = true }) => {
   const { lang } = useWateera();
-  const [hasSummonedEva, setHasSummonedEva] = useState<boolean>(false);
+  const [isEvaActive, setIsEvaActive] = useState<boolean>(false);
+
+  const handleToggleEva = () => {
+    if (!isEvaActive) {
+      setIsEvaActive(true);
+    } else {
+      toggleEvaTeleport();
+    }
+  };
 
   return (
     <div
@@ -29,14 +38,19 @@ export const LandingPage: React.FC<LandingPageProps> = ({ isEvaVisible = true })
       dir={lang === "ar" ? "rtl" : "ltr"}
       className="relative min-h-screen w-full bg-[#000000] text-[#F8FAFC] overflow-x-clip"
     >
-      <Navbar isEvaVisible={isEvaVisible && hasSummonedEva} />
+      <Navbar
+        isEvaVisible={isEvaActive && isEvaVisible}
+        onToggleEva={handleToggleEva}
+      />
+
+      {isEvaActive && <Eva />}
 
       <main id="wateera-landing-main" className="relative w-full bg-[#000000]">
         <HeroSection />
         <WorkspaceContinuation />
         <WorkspaceShowcase />
         <PlatformFeatures />
-        <SummonEvaSection onSummonComplete={() => setHasSummonedEva(true)} />
+        <SummonEvaSection />
         <WhyChooseImpactSection />
         <ProcessHowItWorksSection />
         <PricingPlansSection />
