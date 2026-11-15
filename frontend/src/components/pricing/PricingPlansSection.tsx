@@ -83,12 +83,12 @@ export const PricingPlansSection: React.FC = () => {
       // Phase 1 (0.00 -> 0.14): Brief hold in the stacked center state so the stack is clearly seen
       tl.to({}, { duration: 0.14 });
 
-      // Phase 2 (0.14 -> 0.72): Cards fan out horizontally and settle completely upright (rotation: 0, y: 0)
-      // Left Card (Starter): Animates from center stack (0%) to x: "-105%", upright
+      // Phase 2 (0.14 -> 0.72): Cards fan out horizontally and settle completely upright at identical size (scale: 1)
+      // Left Card (Starter): Animates from center stack (0%) to x: "-106%", upright
       tl.to(
         starterCard,
         {
-          x: "-105%",
+          x: "-106%",
           rotation: 0,
           y: 0,
           scale: 1,
@@ -99,14 +99,14 @@ export const PricingPlansSection: React.FC = () => {
         0.14
       );
 
-      // Center Card (Pro): Scales up to 1.05 in the center (zIndex: 10)
+      // Center Card (Pro): Stays at scale: 1 in the center (zIndex: 10) so all 3 cards match size
       tl.to(
         proCard,
         {
           x: "0%",
           y: 0,
           rotation: 0,
-          scale: 1.05,
+          scale: 1,
           zIndex: 10,
           opacity: 1,
           duration: 0.58,
@@ -115,11 +115,11 @@ export const PricingPlansSection: React.FC = () => {
         0.14
       );
 
-      // Right Card (Enterprise): Animates from center stack (0%) to x: "105%", upright
+      // Right Card (Enterprise): Animates from center stack (0%) to x: "106%", upright
       tl.to(
         enterpriseCard,
         {
-          x: "105%",
+          x: "106%",
           rotation: 0,
           y: 0,
           scale: 1,
@@ -213,7 +213,7 @@ export const PricingPlansSection: React.FC = () => {
     >
       <section
         ref={sectionRef}
-        className="lg:sticky lg:top-0 w-full min-h-screen lg:h-screen bg-[#050505] pt-20 pb-12 sm:pt-24 sm:pb-14 px-4 sm:px-6 lg:px-8 overflow-hidden flex flex-col items-center justify-center select-none"
+        className="lg:sticky lg:top-0 w-full min-h-screen bg-[#050505] pt-20 md:pt-22 pb-10 px-4 sm:px-6 lg:px-8 overflow-x-clip flex flex-col items-center justify-center select-none"
       >
         {/* Ambient Wateera Aura Behind the Card Fan */}
         <div
@@ -225,18 +225,18 @@ export const PricingPlansSection: React.FC = () => {
           {/* Section Header (Permanently Visible - Never Disappears on Card Animation) */}
           <div
             dir={isAr ? "rtl" : "ltr"}
-            className="text-center max-w-3xl mx-auto mb-8 lg:mb-12"
+            className="text-center max-w-3xl mx-auto mb-5 lg:mb-6"
           >
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/[0.03] border border-[#C84BFE]/25 text-xs font-mono uppercase tracking-[0.2em] text-[#C84BFE] mb-3 shadow-[0_0_15px_rgba(200,75,254,0.15)]">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/[0.03] border border-[#C84BFE]/25 text-xs font-mono uppercase tracking-[0.2em] text-[#C84BFE] mb-2.5 shadow-[0_0_15px_rgba(200,75,254,0.15)]">
               <span className="w-1.5 h-1.5 rounded-full bg-[#C84BFE] animate-pulse" />
               {isAr ? "الأسعار والباقات // وتيرة" : "PRICING & PLANS // WATEERA WORKSPACE"}
             </div>
 
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white">
+            <h2 className="text-3xl sm:text-4xl lg:text-[42px] font-extrabold tracking-tight text-white leading-tight">
               {isAr ? "استثمر في التركيز العميق" : "Scale Your Autonomous Flow"}
             </h2>
 
-            <p className="mt-2.5 text-sm sm:text-base lg:text-lg text-slate-400 leading-relaxed">
+            <p className="mt-2 text-sm sm:text-base text-slate-400 leading-relaxed">
               {isAr
                 ? "باقات مرنة مصممة للفرق الطموحة والمؤسسات التي تبحث عن أقصى درجات الإنتاجية والأمان."
                 : "Transparent plans designed for high-velocity engineering teams and enterprise organizations."}
@@ -246,16 +246,16 @@ export const PricingPlansSection: React.FC = () => {
           {/* Card Stack & Fan-Out Stage Container */}
           <div
             ref={stageRef}
-            className="relative w-full min-h-[480px] xl:min-h-[510px] flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-0"
+            className="relative w-full lg:h-[465px] flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-0"
           >
             {/* ==================== CARD 1: STARTER (LEFT) ==================== */}
             <div
               ref={starterCardRef}
               dir={isAr ? "rtl" : "ltr"}
-              className="w-full max-w-[360px] lg:w-[340px] xl:w-[365px] lg:absolute bg-[#0C0B12]/90 border border-white/10 backdrop-blur-md rounded-3xl p-6 sm:p-7 flex flex-col justify-between shadow-[0_20px_60px_rgba(0,0,0,0.75)] transition-colors duration-300 hover:border-white/25 will-change-transform"
+              className="w-full max-w-[360px] lg:w-[340px] xl:w-[360px] lg:h-[465px] lg:absolute bg-[#0C0B12]/90 border border-white/10 backdrop-blur-md rounded-3xl p-5 sm:p-6 flex flex-col justify-between shadow-[0_20px_60px_rgba(0,0,0,0.75)] transition-colors duration-300 hover:border-white/25 will-change-transform"
             >
               <div>
-                <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center justify-between mb-3.5">
                   <div className="flex items-center gap-2.5">
                     <div className="w-9 h-9 rounded-2xl bg-white/[0.06] border border-white/10 flex items-center justify-center text-slate-300">
                       <Zap className="w-4 h-4" />
@@ -269,20 +269,20 @@ export const PricingPlansSection: React.FC = () => {
                   </span>
                 </div>
 
-                <div className="mb-4 pb-4 border-b border-white/10">
+                <div className="mb-3.5 pb-3.5 border-b border-white/10">
                   <div className="flex items-baseline gap-2">
                     <span className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
                       {isAr ? "مجاناً" : "Free"}
                     </span>
                   </div>
-                  <p className="mt-1.5 text-xs sm:text-sm text-slate-400">
+                  <p className="mt-1 text-xs sm:text-sm text-slate-400">
                     {isAr
                       ? "بداية مثالية للفرق الصغيرة لاستكشاف بيئة وتيرة."
                       : "Ideal for small teams exploring the Wateera ecosystem."}
                   </p>
                 </div>
 
-                <ul className="space-y-3 mb-5">
+                <ul className="space-y-2.5 mb-3.5">
                   {starterFeatures.map((feature, idx) => (
                     <li key={idx} className="flex items-start gap-2.5 text-sm text-slate-200">
                       <span className="mt-0.5 w-5 h-5 rounded-full bg-white/10 flex items-center justify-center shrink-0 text-slate-300">
@@ -294,9 +294,9 @@ export const PricingPlansSection: React.FC = () => {
                 </ul>
 
                 {/* Note Callout */}
-                <div className="rounded-2xl bg-amber-500/[0.07] border border-amber-400/20 p-3 mb-5 flex items-start gap-2">
+                <div className="rounded-2xl bg-amber-500/[0.07] border border-amber-400/20 p-2.5 mb-3 flex items-start gap-2">
                   <AlertCircle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
-                  <p className="text-xs text-amber-200/90 leading-relaxed">
+                  <p className="text-xs text-amber-200/90 leading-snug">
                     <strong className="font-semibold">
                       {isAr ? "ملاحظة: " : "Note: "}
                     </strong>
@@ -319,7 +319,7 @@ export const PricingPlansSection: React.FC = () => {
             <div
               ref={proCardRef}
               dir={isAr ? "rtl" : "ltr"}
-              className="w-full max-w-[360px] lg:w-[350px] xl:w-[375px] lg:absolute z-10 bg-[#120E1E]/95 border-2 border-purple-500/50 backdrop-blur-md rounded-3xl p-6 sm:p-7 flex flex-col justify-between shadow-[0_0_55px_rgba(168,85,247,0.32)] will-change-transform"
+              className="w-full max-w-[360px] lg:w-[340px] xl:w-[360px] lg:h-[465px] lg:absolute z-10 bg-[#120E1E]/95 border-2 border-purple-500/50 backdrop-blur-md rounded-3xl p-5 sm:p-6 flex flex-col justify-between shadow-[0_0_55px_rgba(168,85,247,0.32)] overflow-hidden will-change-transform"
             >
               {/* Subtle Inner Top Glow */}
               <div
@@ -328,12 +328,12 @@ export const PricingPlansSection: React.FC = () => {
               />
 
               <div className="relative z-10">
-                <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center justify-between mb-3.5">
                   <div className="flex items-center gap-2.5">
                     <div className="w-9 h-9 rounded-2xl bg-gradient-to-br from-[#C84BFE]/25 to-[#8B5CF6]/25 border border-purple-400/40 flex items-center justify-center text-[#C84BFE] shadow-[0_0_20px_rgba(200,75,254,0.3)]">
                       <Sparkles className="w-4 h-4" />
                     </div>
-                    <h3 className="text-xl sm:text-2xl font-extrabold text-white">
+                    <h3 className="text-lg sm:text-xl font-extrabold text-white">
                       {isAr ? "الاحترافية (Pro)" : "Pro"}
                     </h3>
                   </div>
@@ -342,7 +342,7 @@ export const PricingPlansSection: React.FC = () => {
                   </span>
                 </div>
 
-                <div className="mb-4 pb-4 border-b border-purple-500/25">
+                <div className="mb-3.5 pb-3.5 border-b border-purple-500/25">
                   <div className="flex items-baseline gap-1.5 flex-wrap">
                     <span className="text-3xl sm:text-4xl font-black bg-gradient-to-r from-white via-[#F3E8FF] to-[#C84BFE] bg-clip-text text-transparent">
                       $X
@@ -351,16 +351,16 @@ export const PricingPlansSection: React.FC = () => {
                       {isAr ? "/ لكل مستخدم / شهرياً" : "/ user / month"}
                     </span>
                   </div>
-                  <p className="mt-1.5 text-xs sm:text-sm text-slate-300/90">
+                  <p className="mt-1 text-xs sm:text-sm text-slate-300/90">
                     {isAr
                       ? "القوة الكاملة لإيفا والأتمتة الذكية لفرق التطوير."
                       : "Full autonomous EVA orchestration for high-performing teams."}
                   </p>
                 </div>
 
-                <ul className="space-y-3.5 mb-6">
+                <ul className="space-y-3 mb-4">
                   {proFeatures.map((feature, idx) => (
-                    <li key={idx} className="flex items-start gap-2.5 text-sm sm:text-base font-medium text-white">
+                    <li key={idx} className="flex items-start gap-2.5 text-sm font-medium text-white">
                       <span className="mt-0.5 w-5 h-5 rounded-full bg-gradient-to-br from-[#C84BFE] to-[#8B5CF6] flex items-center justify-center shrink-0 text-black shadow-[0_0_12px_rgba(200,75,254,0.5)]">
                         <Check className="w-3.5 h-3.5 stroke-[2.5]" />
                       </span>
@@ -372,7 +372,7 @@ export const PricingPlansSection: React.FC = () => {
 
               <button
                 type="button"
-                className="relative z-10 w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-[#C84BFE] to-[#8B5CF6] hover:opacity-95 text-sm font-extrabold text-white shadow-[0_0_30px_rgba(200,75,254,0.4)] transition-all duration-300 cursor-pointer"
+                className="relative z-10 w-full py-3 px-6 rounded-2xl bg-gradient-to-r from-[#C84BFE] to-[#8B5CF6] hover:opacity-95 text-sm font-extrabold text-white shadow-[0_0_30px_rgba(200,75,254,0.4)] transition-all duration-300 cursor-pointer"
               >
                 {isAr ? "اشترك في الباقة الاحترافية" : "Upgrade to Pro"}
               </button>
@@ -382,10 +382,10 @@ export const PricingPlansSection: React.FC = () => {
             <div
               ref={enterpriseCardRef}
               dir={isAr ? "rtl" : "ltr"}
-              className="w-full max-w-[360px] lg:w-[340px] xl:w-[365px] lg:absolute bg-[#0C0B12]/90 border border-white/10 backdrop-blur-md rounded-3xl p-6 sm:p-7 flex flex-col justify-between shadow-[0_20px_60px_rgba(0,0,0,0.75)] transition-colors duration-300 hover:border-white/25 will-change-transform"
+              className="w-full max-w-[360px] lg:w-[340px] xl:w-[360px] lg:h-[465px] lg:absolute bg-[#0C0B12]/90 border border-white/10 backdrop-blur-md rounded-3xl p-5 sm:p-6 flex flex-col justify-between shadow-[0_20px_60px_rgba(0,0,0,0.75)] transition-colors duration-300 hover:border-white/25 will-change-transform"
             >
               <div>
-                <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center justify-between mb-3.5">
                   <div className="flex items-center gap-2.5">
                     <div className="w-9 h-9 rounded-2xl bg-white/[0.06] border border-white/10 flex items-center justify-center text-slate-300">
                       <Building2 className="w-4 h-4" />
@@ -400,20 +400,20 @@ export const PricingPlansSection: React.FC = () => {
                   </span>
                 </div>
 
-                <div className="mb-4 pb-4 border-b border-white/10">
+                <div className="mb-3.5 pb-3.5 border-b border-white/10">
                   <div className="flex items-baseline gap-2">
                     <span className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
                       {isAr ? "تسعير مخصص" : "Custom Pricing"}
                     </span>
                   </div>
-                  <p className="mt-1.5 text-xs sm:text-sm text-slate-400">
+                  <p className="mt-1 text-xs sm:text-sm text-slate-400">
                     {isAr
                       ? "حلول سيادية متكاملة وتحكم كامل بالبنية التحتية."
                       : "Sovereign infrastructure and tailored workflows at scale."}
                   </p>
                 </div>
 
-                <ul className="space-y-3 mb-6">
+                <ul className="space-y-3 mb-4">
                   {enterpriseFeatures.map((feature, idx) => (
                     <li key={idx} className="flex items-start gap-2.5 text-sm text-slate-200">
                       <span className="mt-0.5 w-5 h-5 rounded-full bg-white/10 flex items-center justify-center shrink-0 text-[#A78BFA]">

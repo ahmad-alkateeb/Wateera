@@ -1,1 +1,1 @@
-export { SummonEvaSection, WhosEvaSection, renderScatterChars } from "./SummonEvaSection";
+export { SummonEvaSection } from "./SummonEvaSection";

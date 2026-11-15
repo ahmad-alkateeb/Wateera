@@ -1,42 +1,78 @@
 "use client";
 
 import React from "react";
-import { Cpu, Layers, Sparkles } from "lucide-react";
+import { Building2, Code2, Cpu, Layers, ShieldCheck, Zap } from "lucide-react";
 import { useWateera } from "../../context/WateeraContext";
 
 const WORKSPACE_PILLARS = [
+  // Row 1 — Who It's Built For (Target Software Roles)
   {
-    id: "modular-canvas",
-    icon: Layers,
+    id: "for-software-engineers",
+    icon: Code2,
     accent: "#C84BFE",
-    titleEn: "Adaptive Digital Canvas",
-    titleAr: "مساحة عمل متكيفة ومرنة",
+    titleEn: "For Software Engineers",
+    titleAr: "لمهندسي البرمجيات",
     descriptionEn:
-      "Arrange your thoughts, tasks, and knowledge inside a minimalist, distraction-free environment engineered for deep work.",
+      "Eliminate context-switching and ship clean code faster in a distraction-free environment integrated with your dev pipeline.",
     descriptionAr:
-      "رتّب أفكارك ومهامك ومعارفك داخل بيئة مبسطة وخالية من المشتتات صُممت للعمل العميق.",
+      "تخلص من التشتت وسرّع كتابة وتسليم الكود في بيئة عمل هادئة ومرتبطة مباشرة بمسار التطوير.",
   },
   {
-    id: "eva-companion",
-    icon: Sparkles,
-    accent: "#8B5CF6",
-    titleEn: "Intelligent Orchestration",
-    titleAr: "إدارة ذكية ومتكاملة",
-    descriptionEn:
-      "Interact effortlessly with EVA. She anticipates your needs, responds contextually, and keeps your momentum going without breaking your flow.",
-    descriptionAr:
-      "تفاعل بكل سهولة مع EVA؛ حيث تستبق احتياجاتك وتستجيب بذكاء للحفاظ على تدفق إنجازك دون انقطاع.",
-  },
-  {
-    id: "fluid-engine",
+    id: "for-tech-leads",
     icon: Cpu,
-    accent: "#4F46E5",
-    titleEn: "Zero-Friction Fluidity",
-    titleAr: "انسيابية فائقة بلا عوائق",
+    accent: "#8B5CF6",
+    titleEn: "For Tech Leads & Scrum Masters",
+    titleAr: "لقادة الفرق التقنية (Tech Leads)",
     descriptionEn:
-      "Engineered for instant responsiveness. Your creative process, real-time collaboration, and navigation stay locked in perfect sync.",
+      "Gain instant clarity on sprint velocity, code bottlenecks, and developer workload without micromanaging.",
     descriptionAr:
-      "صُممت لاستجابة فورية؛ لتظل عمليتك الإبداعية وتعاونك في الوقت الفعلي وتنقلك في تناغم تام.",
+      "احصل على رؤية لحظية لسرعة السبرنت، اختناقات الكود، وتوزيع المهام البرمجية بدون تعقيد إداري.",
+  },
+  {
+    id: "for-software-houses",
+    icon: Building2,
+    accent: "#4F46E5",
+    titleEn: "For Software Houses & Startups",
+    titleAr: "لشركات البرمجة والـ Startups",
+    descriptionEn:
+      "Scale your engineering operations in one unified workspace covering backlogs, smart hours, and fair evaluation.",
+    descriptionAr:
+      "وسّع عملياتك الهندسية في منصة موحدة تجمع إدارة المشاريع، الساعات الذكية، والتقييم العادل للمطورين.",
+  },
+
+  // Row 2 — Our Impact & Why Choose Wateera
+  {
+    id: "deep-work-focus",
+    icon: Zap,
+    accent: "#C84BFE",
+    titleEn: "3x Deep Work Focus",
+    titleAr: "تركيز برمجي مضاعف 3 مرات",
+    descriptionEn:
+      "By automating administrative updates and status reporting, Wateera triples uninterrupted coding hours.",
+    descriptionAr:
+      "عبر أتمتة المتابعات الإدارية وتقارير الإنجاز، تضاعف وتيرة ساعات البرمجة العميقة بلا مقاطعة.",
+  },
+  {
+    id: "session-security-integrity",
+    icon: ShieldCheck,
+    accent: "#8B5CF6",
+    titleEn: "99.9% Session & Security Integrity",
+    titleAr: "أمان وموثوقية جلسات 99.9%",
+    descriptionEn:
+      "Context-aware security and smart session tracking keep engineering workspaces protected without breaking flow.",
+    descriptionAr:
+      "حماية ذكية مدركة للسياق وتتبع دقيق للجلسات يحافظ على أمان بيئة العمل البرمجية دون قطع تركيز المطور.",
+  },
+  {
+    id: "scattered-tools-replaced",
+    icon: Layers,
+    accent: "#4F46E5",
+    titleEn: "5+ Scattered Tools Replaced",
+    titleAr: "استبدال +5 أدوات مبعثرة",
+    descriptionEn:
+      "Stop paying for disconnected apps. Unify task boards, time tracking, points matrix, and AI orchestration.",
+    descriptionAr:
+      "توقف عن تشتيت فريقك بين التطبيقات؛ اجمع لوحات المهام، تتبع الوقت، مصفوفة النقاط، والذكاء الاصطناعي بمكان واحد.",
   },
 ];
 
@@ -45,7 +81,7 @@ export const WorkspaceContinuation: React.FC = () => {
 
   return (
     <section
-      id="workspace-pillars"
+      id="features"
       dir={lang === "ar" ? "rtl" : "ltr"}
       className="relative z-20 w-full bg-[#000000] py-24 sm:py-32 px-6 lg:px-10"
     >

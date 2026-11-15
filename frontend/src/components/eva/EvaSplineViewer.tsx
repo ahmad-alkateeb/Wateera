@@ -68,7 +68,54 @@ export const EvaSplineViewer: React.FC<EvaSplineViewerProps> = ({
             __configureGuarded?: boolean;
           };
         };
+        IntersectionObserver?: typeof IntersectionObserver & {
+          __splineGuarded?: boolean;
+        };
       };
+
+      // Force @splinetool/viewer's internal IntersectionObserver to treat <spline-viewer> as
+      // immediately visible on page load so it compiles shaders and renders before the user scrolls to it
+      if (anyWin.IntersectionObserver && !anyWin.IntersectionObserver.__splineGuarded) {
+        const OrigIO = anyWin.IntersectionObserver;
+        const PatchedIO = function (
+          callback: IntersectionObserverCallback,
+          options?: IntersectionObserverInit
+        ) {
+          const instance = new OrigIO(callback, options);
+          const origObserve = instance.observe.bind(instance);
+          instance.observe = (target: Element) => {
+            if (target && target.tagName && target.tagName.toLowerCase() === "spline-viewer") {
+              setTimeout(() => {
+                try {
+                  const rect = target.getBoundingClientRect();
+                  callback(
+                    [
+                      {
+                        target,
+                        isIntersecting: true,
+                        intersectionRatio: 1,
+                        boundingClientRect: rect,
+                        intersectionRect: rect,
+                        rootBounds: null,
+                        time: performance.now(),
+                      } as IntersectionObserverEntry,
+                    ],
+                    instance
+                  );
+                } catch {
+                  origObserve(target);
+                }
+              }, 0);
+              return;
+            }
+            return origObserve(target);
+          };
+          return instance;
+        } as unknown as typeof IntersectionObserver & { __splineGuarded?: boolean };
+        PatchedIO.prototype = OrigIO.prototype;
+        PatchedIO.__splineGuarded = true;
+        anyWin.IntersectionObserver = PatchedIO;
+      }
 
       if (anyWin.GPUDevice?.prototype && !anyWin.GPUDevice.prototype.__textureGuarded) {
         anyWin.GPUDevice.prototype.__textureGuarded = true;
@@ -192,6 +239,8 @@ export const EvaSplineViewer: React.FC<EvaSplineViewerProps> = ({
       const newViewer = document.createElement("spline-viewer") as SplineViewerElement;
       newViewer.setAttribute("width", String(size));
       newViewer.setAttribute("height", String(size));
+      newViewer.setAttribute("loading", "eager");
+      newViewer.setAttribute("background", "transparent");
       newViewer.style.width = `${size}px`;
       newViewer.style.height = `${size}px`;
       newViewer.style.minWidth = `${size}px`;
@@ -201,37 +250,23 @@ export const EvaSplineViewer: React.FC<EvaSplineViewerProps> = ({
       newViewer.style.border = "none";
       newViewer.style.outline = "none";
       newViewer.style.pointerEvents = "none";
+      // Keep viewer hidden until gray scene bgColor is cleared and internal Spline Start animation finishes
+      newViewer.style.opacity = "0";
+      newViewer.style.transition = "opacity 0.28s ease-out";
       newViewer.setAttribute("url", splineUrl);
       container.appendChild(newViewer);
       viewerEl = newViewer;
     } else if (viewerEl.getAttribute("url") !== splineUrl) {
+      viewerEl.style.opacity = "0";
       viewerEl.setAttribute("url", splineUrl);
     }
 
     const currentViewer = viewerEl;
+    let revealTimer: ReturnType<typeof setTimeout> | null = null;
+    let isRevealed = false;
+    let fastInitRaf: number | null = null;
 
-    const urlTimer = setTimeout(() => {
-      if (currentViewer?.shadowRoot) {
-        const innerContainer = currentViewer.shadowRoot.querySelector("#container") as HTMLElement | null;
-        if (innerContainer) {
-          innerContainer.style.width = `${size}px`;
-          innerContainer.style.height = `${size}px`;
-          innerContainer.style.background = "transparent";
-          innerContainer.style.pointerEvents = "none";
-        }
-        const canvas = currentViewer.shadowRoot.querySelector("canvas") as HTMLCanvasElement | null;
-        if (canvas) {
-          canvas.width = size;
-          canvas.height = size;
-          canvas.style.width = `${size}px`;
-          canvas.style.height = `${size}px`;
-          canvas.style.background = "transparent";
-          canvas.style.pointerEvents = "none";
-        }
-      }
-    }, 60);
-
-    const cleanShadowTimer = setInterval(() => {
+    const applyTransparentAndClean = () => {
       const anyViewer = currentViewer as HTMLElement & {
         shadowRoot?: ShadowRoot;
         _spline?: SplineRuntimeApp;
@@ -242,9 +277,14 @@ export const EvaSplineViewer: React.FC<EvaSplineViewerProps> = ({
         if (logo) logo.style.display = "none";
 
         const innerContainer = anyViewer.shadowRoot.querySelector("#container") as HTMLElement | null;
-        if (innerContainer) innerContainer.style.pointerEvents = "none";
+        if (innerContainer) {
+          innerContainer.style.width = `${size}px`;
+          innerContainer.style.height = `${size}px`;
+          innerContainer.style.background = "transparent";
+          innerContainer.style.pointerEvents = "none";
+        }
 
-        const canvas = anyViewer.shadowRoot.querySelector("canvas") as HTMLElement | null;
+        const canvas = anyViewer.shadowRoot.querySelector("canvas") as HTMLCanvasElement | null;
         if (canvas) {
           canvas.style.background = "transparent";
           canvas.style.pointerEvents = "none";
@@ -254,12 +294,38 @@ export const EvaSplineViewer: React.FC<EvaSplineViewerProps> = ({
       if (anyViewer?._spline) {
         const app = anyViewer._spline;
         splineAppRef.current = app;
+
+        // Immediately strip default gray scene background BEFORE revealing canvas
+        if (app._scene?.activePage?.bgColor) {
+          app._scene.activePage.bgColor.a = 0;
+        }
+        if (app._renderer) {
+          app._renderer.clearAlphaOverride = 0;
+          app._renderer.setClearAlpha?.(0);
+        }
+
         syncSplineEyeMeshes(app, showHappyEyesRef.current, blinkScaleYRef.current);
 
         const rigObj = app.findObjectByName?.("EVA");
         if (rigObj && !hasNotifiedReadyRef.current) {
           hasNotifiedReadyRef.current = true;
           onReadyRef.current?.(app);
+          app._requestRenderAutoMode?.();
+
+          // Wait 850ms for Spline's internal Start assembly animation (eyes -> visor -> body)
+          // to complete while opacity is still 0, so the user never sees the gray box or partial parts
+          revealTimer = setTimeout(() => {
+            if (app._scene?.activePage?.bgColor) {
+              app._scene.activePage.bgColor.a = 0;
+            }
+            if (app._renderer) {
+              app._renderer.clearAlphaOverride = 0;
+              app._renderer.setClearAlpha?.(0);
+            }
+            app._requestRenderAutoMode?.();
+            currentViewer.style.opacity = "1";
+            isRevealed = true;
+          }, 850);
         }
 
         // Guard renderer setSize against zero values
@@ -286,23 +352,27 @@ export const EvaSplineViewer: React.FC<EvaSplineViewerProps> = ({
           app._controls.enableZoom = false;
           app._controls.enablePan = false;
         }
-        if (app._scene?.activePage?.bgColor) {
-          app._scene.activePage.bgColor.a = 0;
-          if (app._renderer) {
-            app._renderer.clearAlphaOverride = 0;
-            app._renderer.setClearAlpha?.(0);
-          }
-          app._requestRenderAutoMode?.();
-        }
       }
 
       if (container && teleportPhaseRef.current === "idle") {
         container.style.transform = "none";
       }
-    }, 300);
+    };
+
+    // Poll every animation frame during startup until revealed so gray background is killed on frame 0
+    const tickFastInit = () => {
+      applyTransparentAndClean();
+      if (!isRevealed) {
+        fastInitRaf = requestAnimationFrame(tickFastInit);
+      }
+    };
+    fastInitRaf = requestAnimationFrame(tickFastInit);
+
+    const cleanShadowTimer = setInterval(applyTransparentAndClean, 300);
 
     return () => {
-      clearTimeout(urlTimer);
+      if (fastInitRaf !== null) cancelAnimationFrame(fastInitRaf);
+      if (revealTimer !== null) clearTimeout(revealTimer);
       clearInterval(cleanShadowTimer);
     };
   }, [blinkScaleYRef, scriptLoaded, showHappyEyesRef, size, splineAppRef, splineUrl, teleportPhaseRef]);

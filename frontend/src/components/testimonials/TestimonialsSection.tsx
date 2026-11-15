@@ -159,9 +159,9 @@ export const TestimonialsSection: React.FC = () => {
 
   return (
     <section
-      id="testimonials"
+      id="testimonials-section"
       dir="ltr"
-      className="relative z-30 w-full min-h-screen bg-[#050505] py-24 sm:py-32 px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center overflow-hidden select-none"
+      className="relative z-30 w-full bg-[#050505] pt-20 md:pt-22 pb-20 sm:pb-24 px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-start overflow-hidden select-none"
     >
       {/* Subtle Wateera Ambient Glow Behind Cylinder */}
       <div
@@ -172,7 +172,7 @@ export const TestimonialsSection: React.FC = () => {
       {/* Section Header */}
       <div
         dir={isAr ? "rtl" : "ltr"}
-        className="relative z-20 text-center max-w-2xl mx-auto mb-14 sm:mb-16"
+        className="relative z-20 text-center max-w-2xl mx-auto mb-10 sm:mb-12"
       >
         <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/[0.03] border border-[#C84BFE]/25 text-xs font-mono uppercase tracking-[0.2em] text-[#C84BFE] mb-3.5 shadow-[0_0_15px_rgba(200,75,254,0.15)]">
           <Sparkles className="w-3.5 h-3.5 text-[#C84BFE]" />

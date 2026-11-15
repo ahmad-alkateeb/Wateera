@@ -187,9 +187,9 @@ export const FaqSection: React.FC = () => {
   return (
     <section
       ref={sectionRef}
-      id="faq"
+      id="faq-section"
       dir={isAr ? "rtl" : "ltr"}
-      className="relative z-30 w-full bg-[#050505] py-28 sm:py-36 px-4 sm:px-6 lg:px-8 overflow-hidden select-none"
+      className="relative z-30 w-full bg-[#050505] pt-24 md:pt-28 pb-28 sm:pb-36 px-4 sm:px-6 lg:px-8 overflow-hidden select-none"
     >
       {/* Ambient Wateera Volumetric Glow */}
       <div

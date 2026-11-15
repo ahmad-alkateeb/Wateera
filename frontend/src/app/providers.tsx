@@ -20,8 +20,8 @@ export function useTheme() {
 }
 
 export function Providers({ children }: { children: React.ReactNode }) {
-  const [theme, setThemeState] = useState<ThemeMode>("dark");
   const [mounted, setMounted] = useState(false);
+  const [theme, setThemeState] = useState<ThemeMode>("dark");
 
   useEffect(() => {
     const rafId = requestAnimationFrame(() => {
@@ -53,7 +53,14 @@ export function Providers({ children }: { children: React.ReactNode }) {
         suppressHydrationWarning
         className="min-h-screen"
       >
-        {mounted ? <WateeraProvider>{children}</WateeraProvider> : null}
+        {mounted ? (
+          <WateeraProvider>{children}</WateeraProvider>
+        ) : (
+          <div
+            suppressHydrationWarning
+            className="fixed inset-0 z-[150] bg-[#060314]"
+          />
+        )}
       </div>
     </ThemeContext.Provider>
   );

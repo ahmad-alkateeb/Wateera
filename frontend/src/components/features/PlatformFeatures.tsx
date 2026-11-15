@@ -134,7 +134,7 @@ export const PlatformFeatures: React.FC = () => {
       <section
         id="platform-features"
         dir={lang === "ar" ? "rtl" : "ltr"}
-        className="relative z-10 w-full bg-[#050505] py-24 sm:py-32 px-4 sm:px-6 lg:px-8 border-t border-white/[0.06] overflow-hidden"
+        className="relative z-10 w-full bg-[#050505] pt-20 md:pt-22 pb-24 sm:pb-32 px-4 sm:px-6 lg:px-8 border-t border-white/[0.06] overflow-hidden"
       >
         {/* Ambient background atmosphere glow */}
         <div

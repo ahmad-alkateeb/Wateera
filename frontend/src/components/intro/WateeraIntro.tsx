@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef } from "react";
+import { useWateera } from "../../context/WateeraContext";
 import { WATEERA_LOGO_RIBBONS } from "./introPaths";
 import { IntroStyles } from "./IntroStyles";
 
@@ -9,6 +10,7 @@ interface WateeraIntroProps {
 }
 
 export function WateeraIntro({ onComplete }: WateeraIntroProps) {
+  const { lang } = useWateera();
   const onCompleteRef = useRef(onComplete);
 
   useEffect(() => {
@@ -58,7 +60,7 @@ export function WateeraIntro({ onComplete }: WateeraIntroProps) {
         }}
         className="fixed bottom-7 right-7 z-[170] px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 text-white/90 text-xs font-bold border border-white/20 backdrop-blur-md transition-all cursor-pointer"
       >
-        تخطي المقدمة / Skip ➔
+        {lang === "ar" ? "تخطي المقدمة" : "Skip Intro"}
       </button>
 
       <div className="wtr-logo-stage relative w-[360px] h-[230px] sm:w-[600px] sm:h-[380px] flex items-center justify-center">

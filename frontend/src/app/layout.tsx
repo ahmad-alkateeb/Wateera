@@ -36,7 +36,7 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`dark ${geistSans.variable} ${geistMono.variable} ${outfitDisplay.variable}`}
     >
-      <body suppressHydrationWarning>
+      <body suppressHydrationWarning className="bg-[#060314]">
         <Providers>{children}</Providers>
       </body>
     </html>
